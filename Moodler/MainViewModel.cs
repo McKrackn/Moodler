@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media.Animation;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 
@@ -32,7 +29,6 @@ namespace Moodler
                 else _filteredlectures = value;
             }
         }
-
         private string _status;
         public string Status
         {
@@ -57,6 +53,7 @@ namespace Moodler
             get => _showEmpty;
             set => this.Set(ref _showEmpty, value, nameof(ShowEmpty));
         }
+
         public string Pass { get; set; }
         public string User { get; set; }
 
@@ -78,12 +75,6 @@ namespace Moodler
             () => NameVisibility=="True");
         }
         
-    private void GradeAlerter()
-        {
-            HttpWebRequest req;
-
-        }
-
         private void ConnectToMoodle()
         {
             string formUrl = "https://moodle.technikum-wien.at/";
@@ -105,6 +96,17 @@ namespace Moodler
             {
                 GetMoodleGrades(req);
                 Thread.Sleep(RefreshRate * 1000);
+            }
+        }
+
+        public void Moo()
+        {
+            while (!SilentMode)
+            {
+                MediaPlayer mediaPlayer = new MediaPlayer();
+                mediaPlayer.Open(new Uri($"media\\moo.wav", UriKind.Relative));
+                mediaPlayer.Play();
+                Thread.Sleep(4000);
             }
         }
 
@@ -135,10 +137,11 @@ namespace Moodler
                                             found = true;
                                             if (actLecture.LectureGrade != tmpLecture.LectureGrade)
                                             {
-                                                Lectures.Remove(actLecture);
-                                                tmpLecture.BackgroundColor = "OrangeRed";
-                                                Lectures.Add(tmpLecture);
+                                                actLecture.BackgroundColor = "OrangeRed";
+                                                actLecture.LectureGrade = tmpLecture.LectureGrade;
+                                                Task.Factory.StartNew(Moo);
                                             }
+                                            break;
                                         }
                                     if (found == false)
                                     {
