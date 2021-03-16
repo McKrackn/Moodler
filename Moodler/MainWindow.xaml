@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="ye olde MOOdler76" Height="530" Width="780"
+        Title="MOOdler 76" Height="530" Width="780"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         Icon="/media/icon.png">
 
@@ -41,7 +41,6 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
-
             <StackPanel Width="100" Orientation="Vertical" Margin="30,5,0,0">
                 <Label Content="Moodle User" FontWeight="Bold"/>
                 <TextBox Text="{Binding User, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding NameVisibility, Mode=OneWay}"/>

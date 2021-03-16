@@ -68,9 +68,9 @@ namespace Moodler
         {
             MoodleConnectCommand = new RelayCommand(()=>
                 {
-                    NameVisibility = "False";
-                    MoodleConnectCommand.RaiseCanExecuteChanged();
+                    NameVisibility = "False"; 
                     Task.Factory.StartNew(ConnectToMoodle);
+                    MoodleConnectCommand.RaiseCanExecuteChanged();
                 },
             () => NameVisibility=="True");
         }
@@ -91,8 +91,7 @@ namespace Moodler
                 os.Write(bytes, 0, bytes.Length);
             }
             WebResponse resp = (HttpWebResponse)req.GetResponse();
-            NameVisibility = "False";
-            while (true)
+            while (NameVisibility=="False")
             {
                 GetMoodleGrades(req);
                 Thread.Sleep(RefreshRate * 1000);
@@ -122,7 +121,7 @@ namespace Moodler
                         {
                             pageSource = sr.ReadToEnd();
                         }
-                        var regexFindLectures = new Regex("grade-report-overview-18320.*?a\\ href.*?>(.*?)<\\/a.*?c1\">(.*?)<", RegexOptions.IgnoreCase);
+                        var regexFindLectures = new Regex("grade-report-overview-.*?a\\ href.*?>(.*?)<\\/a.*?c1\">(.*?)<", RegexOptions.IgnoreCase);
                         var matches = regexFindLectures.Matches(pageSource);
                         foreach (Match match in matches)
                         {
@@ -158,6 +157,12 @@ namespace Moodler
             catch (WebException)
             {
                 Status = "Connection failed (check user/password) at " + DateTime.Now.ToLongTimeString();
+
+                App.Current.Dispatcher.Invoke(
+                    () =>
+                    {
+                        NameVisibility = "True";
+                        MoodleConnectCommand.RaiseCanExecuteChanged(); });
             }
             catch (NullReferenceException)
             {
